@@ -26,11 +26,11 @@ export const downloadFileFromUrl = (url, name) => {
  * @returns {void}
  */
 export default function downloadContent({ id, type, name, source_type, params }) {
-  const getDownloadPath = DOWNLOAD_PATH[type];
-  if (!getDownloadPath) {
+  // Own keys only, so inherited names like 'toString' or '__proto__' are rejected too
+  if (!Object.prototype.hasOwnProperty.call(DOWNLOAD_PATH, type)) {
     throw new Error(`Invalid type of content to download: ${type}`);
   }
-  downloadFileFromUrl(getDownloadPath({ id, source_type, params }), name);
+  downloadFileFromUrl(DOWNLOAD_PATH[type]({ id, source_type, params }), name);
 }
 
 export const downloadFileFromContent = (content, fileName, type) => {

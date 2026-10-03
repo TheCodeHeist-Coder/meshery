@@ -88,12 +88,15 @@ describe('downloadContent', () => {
     expect(setAttributeSpy).toHaveBeenCalledWith('href', '/api/filter/download/f1');
   });
 
-  it('throws an error naming the invalid type for an unknown content type', () => {
-    expect(() => downloadContent({ id: 'x', type: 'unknown', name: 'x' })).toThrow(
-      'Invalid type of content to download: unknown',
-    );
-    expect(createElementSpy).not.toHaveBeenCalled();
-  });
+  it.each(['unknown', 'toString', '__proto__'])(
+    'throws an error naming the invalid type for content type %s',
+    (type) => {
+      expect(() => downloadContent({ id: 'x', type, name: 'x' })).toThrow(
+        `Invalid type of content to download: ${type}`,
+      );
+      expect(createElementSpy).not.toHaveBeenCalled();
+    },
+  );
 });
 
 describe('downloadFileFromContent', () => {
