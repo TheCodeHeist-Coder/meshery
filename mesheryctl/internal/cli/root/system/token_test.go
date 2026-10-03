@@ -7,6 +7,7 @@ import (
 	"runtime"
 	"testing"
 
+	"github.com/meshery/meshery/mesheryctl/internal/cli/root/config"
 	"github.com/meshery/meshery/mesheryctl/pkg/utils"
 	meshkiterrors "github.com/meshery/meshkit/errors"
 	"github.com/spf13/viper"
@@ -504,6 +505,7 @@ tokens:
     name: default
 `
 	malformedConfig := "contexts: [\n  bad yaml"
+	invalidMeshConfig := "contexts: invalid\n"
 
 	tests := []struct {
 		name         string
@@ -528,6 +530,18 @@ tokens:
 			config:       malformedConfig,
 			args:         []string{"token", "list"},
 			expectedCode: utils.ErrReadConfigFileCode,
+		},
+		{
+			name:         "view fails when the meshconfig cannot be unmarshaled",
+			config:       invalidMeshConfig,
+			args:         []string{"token", "view"},
+			expectedCode: config.ErrInvalidMeshConfigCode,
+		},
+		{
+			name:         "list fails when the meshconfig cannot be unmarshaled",
+			config:       invalidMeshConfig,
+			args:         []string{"token", "list"},
+			expectedCode: config.ErrInvalidMeshConfigCode,
 		},
 	}
 
